@@ -1,0 +1,325 @@
+﻿{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Nashville Predators",
+        "Oct_wins": 9,
+        "Nov_wins": 8,
+        "Dec_wins": 6,
+        "Jan_wins": 7,
+        "Feb_wins": 7,
+        "Mar_wins": 7,
+        "Apr_wins": 3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.77861,
+          36.15917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Dallas Stars",
+        "Oct_wins": 6,
+        "Nov_wins": 7,
+        "Dec_wins": 7,
+        "Jan_wins": 5,
+        "Feb_wins": 7,
+        "Mar_wins": 9,
+        "Apr_wins": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -96.81028,
+          32.79056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Winnipeg Jets",
+        "Oct_wins": 7,
+        "Nov_wins": 7,
+        "Dec_wins": 11,
+        "Jan_wins": 8,
+        "Feb_wins": 4,
+        "Mar_wins": 8,
+        "Apr_wins": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.14361,
+          49.89278
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "St. Louis Blues",
+        "Oct_wins": 3,
+        "Nov_wins": 6,
+        "Dec_wins": 6,
+        "Jan_wins": 7,
+        "Feb_wins": 12,
+        "Mar_wins": 8,
+        "Apr_wins": 3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -90.2025,
+          38.62667
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Calgary Flames",
+        "Oct_wins": 7,
+        "Nov_wins": 8,
+        "Dec_wins": 9,
+        "Jan_wins": 9,
+        "Feb_wins": 8,
+        "Mar_wins": 8,
+        "Apr_wins": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -114.05194,
+          51.0375
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Colorado Avalanche",
+        "Oct_wins": 7,
+        "Nov_wins": 8,
+        "Dec_wins": 4,
+        "Jan_wins": 3,
+        "Feb_wins": 6,
+        "Mar_wins": 8,
+        "Apr_wins": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.0075,
+          39.74861
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "San Jose Sharks",
+        "Oct_wins": 6,
+        "Nov_wins": 6,
+        "Dec_wins": 9,
+        "Jan_wins": 8,
+        "Feb_wins": 8,
+        "Mar_wins": 7,
+        "Apr_wins": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.90111,
+          37.33278
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Vegas Golden Knights",
+        "Oct_wins": 5,
+        "Nov_wins": 9,
+        "Dec_wins": 9,
+        "Jan_wins": 6,
+        "Feb_wins": 5,
+        "Mar_wins": 8,
+        "Apr_wins": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -115.178245,
+          36.102803
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Tampa Bay Lightning",
+        "Oct_wins": 8,
+        "Nov_wins": 10,
+        "Dec_wins": 13,
+        "Jan_wins": 6,
+        "Feb_wins": 12,
+        "Mar_wins": 10,
+        "Apr_wins": 3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.45194,
+          27.94278
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Columbus Blue Jackets",
+        "Oct_wins": 6,
+        "Nov_wins": 9,
+        "Dec_wins": 8,
+        "Jan_wins": 5,
+        "Feb_wins": 8,
+        "Mar_wins": 9,
+        "Apr_wins": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.0061111,
+          39.9692833
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Boston Bruins",
+        "Oct_wins": 7,
+        "Nov_wins": 7,
+        "Dec_wins": 7,
+        "Jan_wins": 6,
+        "Feb_wins": 11,
+        "Mar_wins": 9,
+        "Apr_wins": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.0622278,
+          42.3663028
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Toronto Maple Leafs",
+        "Oct_wins": 8,
+        "Nov_wins": 10,
+        "Dec_wins": 8,
+        "Jan_wins": 4,
+        "Feb_wins": 9,
+        "Mar_wins": 6,
+        "Apr_wins": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.37917,
+          43.64333
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Washington Capitals",
+        "Oct_wins": 5,
+        "Nov_wins": 10,
+        "Dec_wins": 9,
+        "Jan_wins": 3,
+        "Feb_wins": 9,
+        "Mar_wins": 11,
+        "Apr_wins": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.02083,
+          38.89806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Carolina Hurricanes",
+        "Oct_wins": 6,
+        "Nov_wins": 6,
+        "Dec_wins": 4,
+        "Jan_wins": 8,
+        "Feb_wins": 10,
+        "Mar_wins": 9,
+        "Apr_wins": 3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.72194,
+          35.80333
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "New York Islanders",
+        "Oct_wins": 6,
+        "Nov_wins": 6,
+        "Dec_wins": 9,
+        "Jan_wins": 8,
+        "Feb_wins": 8,
+        "Mar_wins": 9,
+        "Apr_wins": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.59056,
+          40.72278
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Team": "Pittsburgh Penguins",
+        "Oct_wins": 6,
+        "Nov_wins": 4,
+        "Dec_wins": 11,
+        "Jan_wins": 6,
+        "Feb_wins": 6,
+        "Mar_wins": 10,
+        "Apr_wins": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.989571,
+          40.439570
+        ]
+      }
+    }
+  ]
+}
