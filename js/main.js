@@ -80,9 +80,12 @@ function calcPropRadius(attValue) {
 };
 
 //function to convert markers to circle markers
-function pointToLayer(feature, latlng){
+function pointToLayer(feature, latlng, attributes){
     //Determine which attribute to visualize with proportional symbols
-    var attribute = "Total_2019";
+    var attribute = attributes[0];
+
+    //check
+    console.log(attribute)
 
     //create marker options
     var options = {
@@ -164,11 +167,35 @@ function createSequenceControls(){
 // };
 
 //Add circle markers for point features to the map
-function createPropSymbols(data, map){
+function createPropSymbols(data, attributes){
     //create a Leaflet GeoJSON layer and add it to the map
     L.geoJson(data, {
-        pointToLayer: pointToLayer
+        pointToLayer: function(feature,latlng){
+          return pointToLayer(feature, latlng, attributes);
+        }
     }).addTo(mymap);
+};
+
+//build an attributes array from the data
+function processData(data){
+    //empty array to hold attributes
+    var attributes = [];
+
+    //properties of the first feature in the dataset
+    var properties = data.features[0].properties;
+
+    //push each attribute name into attributes array
+    for (var attribute in properties){
+        //only take attributes with population values
+        if (attribute.indexOf("Total_") > -1){
+            attributes.push(attribute);
+        };
+    };
+
+    //check result
+    console.log(attributes);
+
+    return attributes;
 };
 
 // //function to retrieve the data and place it on the map
@@ -191,10 +218,14 @@ function getData(map){
     $.ajax("data/NHL_PlayoffWins_06-19_alt.geojson", {
         dataType: "json",
         success: function(response){
-            minValue = calcMinValue(response);
+
+            //create an attributes array
+            var attributes = processData(response);
+
+            calcMinValue(response);
             //add symbols and UI elements
-            createPropSymbols(response);
-            createSequenceControls();
+            createPropSymbols(response, attributes);
+            createSequenceControls(attributes);
 
         }
     });
