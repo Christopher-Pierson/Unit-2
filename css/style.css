@@ -1,3 +1,13 @@
 /* Stylesheet by Christopher Pierson, 2020 */
 
 #mapid { height: 800px; }
+
+
+.leaflet-popup-content p {
+    margin: 0.2em 0;
+}
+
+
+layer.bindPopup(popupContent, {
+      offset: new L.Point(0,-options.radius)
+  });

@@ -79,13 +79,13 @@ function calcPropRadius(attValue) {
     return radius;
 };
 
-
-function createPropSymbols(data){
-    //determine the attribute for scaling the proportional symbols
+//function to convert markers to circle markers
+function pointToLayer(feature, latlng){
+    //Determine which attribute to visualize with proportional symbols
     var attribute = "Total_2019";
+
     //create marker options
-    var geojsonMarkerOptions = {
-        radius: 8,
+    var options = {
         fillColor: "#ff1694",
         color: "#000",
         weight: 1,
@@ -93,21 +93,61 @@ function createPropSymbols(data){
         fillOpacity: 0.8
     };
 
+    //For each feature, determine its value for the selected attribute
+    var attValue = Number(feature.properties[attribute]);
+
+    //Give each feature's circle marker a radius based on its attribute value
+    options.radius = calcPropRadius(attValue);
+
+    //create circle marker layer
+    var layer = L.circleMarker(latlng, options);
+
+    //build popup content string
+    var popupContent = "<p>Team: <b>" + feature.properties.Team + "</b></p><p>Playoff Wins Since 2006: <b>" + feature.properties[attribute] + "</p>";
+
+    //bind the popup to the circle marker
+    layer.bindPopup(popupContent);
+
+    //return the circle marker to the L.geoJson pointToLayer option
+    return layer;
+};
+
+// function createPropSymbols(data){
+//     //determine the attribute for scaling the proportional symbols
+//     var attribute = "Total_2019";
+//     //create marker options
+//     var geojsonMarkerOptions = {
+//         radius: 8,
+//         fillColor: "#ff1694",
+//         color: "#000",
+//         weight: 1,
+//         opacity: 1,
+//         fillOpacity: 0.8
+//     };
+//
+//     //create a Leaflet GeoJSON layer and add it to the map
+//     L.geoJson(data, {
+//         pointToLayer: function (feature, latlng) {
+//             //for each feature, determine its value for the selected attribute
+//             var attValue = Number(feature.properties[attribute]);
+//
+//             //give each feature's circle marker a radius based on its attribute value
+//             geojsonMarkerOptions.radius = calcPropRadius(attValue);
+//
+//             //examine the attribute value to check that it is correct
+//             //console.log(feature.properties, attValue);
+//
+//             //create circle markers
+//             return L.circleMarker(latlng, geojsonMarkerOptions);
+//         }
+//     }).addTo(mymap);
+// };
+
+//Add circle markers for point features to the map
+function createPropSymbols(data, map){
     //create a Leaflet GeoJSON layer and add it to the map
     L.geoJson(data, {
-        pointToLayer: function (feature, latlng) {
-            //for each feature, determine its value for the selected attribute
-            var attValue = Number(feature.properties[attribute]);
-
-            //give each feature's circle marker a radius based on its attribute value
-            geojsonMarkerOptions.radius = calcPropRadius(attValue);
-
-            //examine the attribute value to check that it is correct
-            //console.log(feature.properties, attValue);
-
-            //create circle markers
-            return L.circleMarker(latlng, geojsonMarkerOptions);
-        }
+        pointToLayer: pointToLayer
     }).addTo(mymap);
 };
 
