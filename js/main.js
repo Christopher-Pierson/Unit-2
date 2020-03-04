@@ -112,6 +112,26 @@ function pointToLayer(feature, latlng){
     return layer;
 };
 
+//create new sequence controls
+function createSequenceControls(){
+    //create range input element (slider)
+    $('#panel').append('<input class="range-slider" type="range">');
+
+    //set slider attributes
+    $('.range-slider').attr({
+        max: 2019,
+        min: 2006,
+        value: 0,
+        step: 1
+
+    });
+
+    //add step buttons
+    $('#panel').append('<button class="step" id="reverse">Reverse</button>');
+    $('#panel').append('<button class="step" id="forward">Forward</button>');
+};
+
+
 // function createPropSymbols(data){
 //     //determine the attribute for scaling the proportional symbols
 //     var attribute = "Total_2019";
@@ -151,17 +171,32 @@ function createPropSymbols(data, map){
     }).addTo(mymap);
 };
 
-//function to retrieve the data and place it on the map
+// //function to retrieve the data and place it on the map
+// function getData(map){
+//     //load the data
+//     $.getJSON("data/NHL_PlayoffWins_06-19_alt.geojson", function(response){
+//
+//       //calculate minimum data value
+//       minValue = calcMinValue(response);
+//
+//       //call function to create proportional symbols
+//       createPropSymbols(response);
+//
+//     });
+// };
+
+//Import GeoJSON data
 function getData(map){
     //load the data
-    $.getJSON("data/NHL_PlayoffWins_06-19_alt.geojson", function(response){
+    $.ajax("data/NHL_PlayoffWins_06-19_alt.geojson", {
+        dataType: "json",
+        success: function(response){
+            minValue = calcMinValue(response);
+            //add symbols and UI elements
+            createPropSymbols(response);
+            createSequenceControls();
 
-      //calculate minimum data value
-      minValue = calcMinValue(response);
-
-      //call function to create proportional symbols
-      createPropSymbols(response);
-
+        }
     });
 };
 
