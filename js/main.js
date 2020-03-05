@@ -142,7 +142,37 @@ function createSequenceControls(){
     //add step buttons
     $('#panel').append('<button class="step" id="reverse">Reverse</button>');
     $('#panel').append('<button class="step" id="forward">Forward</button>');
+
+    //click listener for buttons
+    $('.step').click(function(){
+      //get the old index value
+      var index = $('.range-slider').val();
+
+      //increment or decrement depending on button clicked
+      if ($(this).attr('id') == 'forward'){
+          index++;
+          //if past the last attribute, wrap around to first attribute
+          index = index > 14 ? 0 : index;
+      } else if ($(this).attr('id') == 'reverse'){
+          index--;
+          //if past the first attribute, wrap around to last attribute
+          index = index < 0 ? 14 : index;
+      };
+
+      //update slider
+      $('.range-slider').val(index);
+  });
+
+    //input listener for slider
+    $('.range-slider').on('input', function(){
+        //get the new index value
+        var index = $(this).val();
+        console.log(index);
+    });
+
+
 };
+
 
 
 // function createPropSymbols(data){
