@@ -53,8 +53,12 @@ function calcMinValue(data){
                 //get population for current year
                var value = team.properties["Total_"+ String(year)];
                //add value to array
+               // console.log(value + " value")
+               // console.log(typeof value)
               if (value > 0){
                 allValues.push(value)
+                // console.log("I'm working")
+                // console.log(value)
 
               }
            }
@@ -63,6 +67,7 @@ function calcMinValue(data){
      //get minimum value of our array
      var minValue = Math.min(...allValues)
 
+     console.log(minValue)
      return minValue;
 }
 
@@ -75,7 +80,12 @@ function calcPropRadius(attValue) {
      //Flannery Appearance Compensation formula
      var radius = 1.0083 * Math.pow(attValue/minValue,0.5715) * minRadius
 
-    console.log(radius)
+    // console.log(0/1)
+    // console.log(radius + " radius")
+    // console.log(attValue + " attvalue")
+    // console.log(typeof attValue)
+    // console.log(minValue + " minvalue")
+    // console.log(minRadius + " minRadius")
     return radius;
 };
 
@@ -222,7 +232,7 @@ function getData(map){
             //create an attributes array
             var attributes = processData(response);
 
-            calcMinValue(response);
+            minValue = calcMinValue(response);
             //add symbols and UI elements
             createPropSymbols(response, attributes);
             createSequenceControls(attributes);
