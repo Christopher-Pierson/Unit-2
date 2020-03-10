@@ -116,7 +116,7 @@ function pointToLayer(feature, latlng, attributes){
     var layer = L.circleMarker(latlng, options);
 
     //build popup content string
-    var popupContent = "<p>Team: <b>" + feature.properties.Team + "</b></p><p>Playoff Wins Since 2006: <b>" + feature.properties[attribute] + "</p>";
+    var popupContent = "<p>Team: <b>" + feature.properties.Team + "</b></p><p>Playoff Wins: <b>" + feature.properties[attribute] + "</p>";
 
     //bind the popup to the circle marker
     layer.bindPopup(popupContent);
