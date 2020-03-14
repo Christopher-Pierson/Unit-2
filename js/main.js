@@ -1,19 +1,12 @@
 /* Javascript by Christopher Pierson, 2020 */
 
-/* Map of GeoJSON data from MegaCities.geojson */
+/* Map of NHL Team Playoff Wins from 2005-2019 */
+
 //declare vars globally so all functions have access
 var mymap;
 var minValue;
 var attributes;
 var dataStats = {min: 1, max: 97, lowmid: 20, highmid: 50};
-//create marker options
-// var options = {
-//     color: "#000",
-//     weight: 1,
-//     opacity: 1,
-//     fillOpacity: 0.8
-// };
-
 
 //function to instantiate the Leaflet map
 function createMap(){
@@ -23,10 +16,10 @@ function createMap(){
         zoom: 4.25
     });
 
-    //add OSM base tilelayer
-    L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.{ext}', {
-    	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      subdomains: 'abcd',
+    //add base tilelayer
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+	    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	    subdomains: 'abcd',
     	minZoom: 0,
     	maxZoom: 20,
     	ext: 'png'
@@ -36,6 +29,7 @@ function createMap(){
     getData();
 };
 
+// create title and container for title
 function createTitle(){
     var Title = L.Control.extend({
         options: {
@@ -47,7 +41,7 @@ function createTitle(){
             var container = L.DomUtil.create('div', 'title-container');
 
             //add temporal legend div to container
-            $(container).append('<h1><b>NHL Playoff Wins During the Crosby & Ovechkin Era</h1>');
+            $(container).append('<h1><b>NHL Playoff Wins by Team During the Crosby & Ovechkin Era</h1>');
 
 
             return container;
@@ -58,7 +52,7 @@ function createTitle(){
 
 };
 
-//added at Example 2.3 line 20...function to attach popups to each mapped feature
+// function to attach popups to each mapped feature
 function onEachFeature(feature, layer) {
     //no property named popupContent; instead, create html string with all properties
     var popupContent = "";
@@ -78,30 +72,23 @@ function calcStats(data){
 
      //loop through each city
      for(var team of data.features){
+
           //loop through each year
           for(var year = 2005; year <= 2019; year+=1){
+
                 //get population for current year
                var value = team.properties["Total_"+ String(year)];
+
                //add value to array
-               // console.log(value + " value")
-               // console.log(typeof value)
               if (value > 0){
                 allValues.push(value)
-                // console.log("I'm working")
-                // console.log(value)
 
               }
            }
      }
 
-     //get min, max, mean stats for our array
+     //get non-zero min value
      var minValue = Math.min(...allValues);
-     dataStats.min = Math.min(...allValues);
-     dataStats.max = Math.max(...allValues);
-
-     //calculate mean
-     var sum = allValues.reduce(function(a, b){return a+b;});
-     dataStats.mean = sum/ allValues.length;
 
      //console.log(minValue)
      return minValue;
@@ -109,6 +96,7 @@ function calcStats(data){
 
 //calculate the radius of each proportional symbol
 function calcPropRadius(attValue) {
+
   //alternate setting of radius for values of zero so point doens't appear too small on map
   if (attValue === 0){
     return 2
@@ -130,8 +118,8 @@ function pointToLayer(feature, latlng, attributes){
     var attribute = attributes[0];
 
     //check
-    console.log(feature);
-    console.log(attribute);
+    //console.log(feature);
+    //console.log(attribute);
 
     //create marker options
     var options = {
@@ -141,25 +129,25 @@ function pointToLayer(feature, latlng, attributes){
         fillOpacity: 0.8
     };
 
-    //For each feature, determine its value for the selected attribute
+    // for each feature, determine its value for the selected attribute
     var attValue = Number(feature.properties[attribute]);
 
-    //Give each feature's circle marker a radius based on its attribute value
+    // give each feature's circle marker a radius based on its attribute value
     options.radius = calcPropRadius(attValue);
 
-    //
+    // set default color
     options.fillColor = "#ff1694";
 
     //create circle marker layer
     var layer = L.circleMarker(latlng, options);
 
-    //build popup content string
+    // build popup content string
     var popupContent = "<p>Team: <b>" + feature.properties.Team + "</b></p>";
 
-    //bind the popup to the circle marker
+    // bind the popup to the circle marker
     layer.bindPopup(popupContent);
 
-    //return the circle marker to the L.geoJson pointToLayer option
+    // return the circle marker to the L.geoJson pointToLayer option
     return layer;
 };
 
@@ -190,9 +178,6 @@ function createSequenceControls(attributes){
 
       mymap.addControl(new SequenceControl());
 
-    //create range input element (slider)
-    //$('#panel').append('<input class="range-slider" type="range">');
-
 
     //set slider attributes
     $('.range-slider').attr({
@@ -204,9 +189,6 @@ function createSequenceControls(attributes){
     });
 
     //add step buttons
-    //$('#panel').append('<button class="step" id="reverse">Reverse</button>');
-    //$('#panel').append('<button class="step" id="forward">Forward</button>');
-    //replace button content with images
     $('#reverse').html('<img src="img/arrow_l.svg">');
     $('#forward').html('<img src="img/arrow_r.svg">');
 
@@ -219,10 +201,12 @@ function createSequenceControls(attributes){
       //increment or decrement depending on button clicked
       if ($(this).attr('id') == 'forward'){
           index++;
+
           //if past the last attribute, wrap around to first attribute
           index = index > 14 ? 0 : index;
       } else if ($(this).attr('id') == 'reverse'){
           index--;
+
           //if past the first attribute, wrap around to last attribute
           index = index < 0 ? 14 : index;
       };
@@ -239,13 +223,12 @@ function createSequenceControls(attributes){
         var index = $(this).val();
         updatePropSymbols(attributes[index]);
         updateTemporalLegend(attributes[index]);
-        //console.log(index);
     });
 
 
 };
 
-
+// create legend for map
 function createLegend(attribute){
     var LegendControl = L.Control.extend({
         options: {
@@ -256,14 +239,13 @@ function createLegend(attribute){
             // create the control container with a particular class name
             var container = L.DomUtil.create('div', 'legend-control-container');
 
-            // var year = attribute.split("_")[1];
-            //$(container).append("<b> Size of circles correspond to that team's total playoff wins since 2005. </b>");
+            // add legend text
+            $(container).append("<p style='display: block; align: left'> Size of circles correspond to that team's total playoff wins since 2005. Color of circles correspond to that team's playoff status during the displayed year: <span style='background-color: #ffff00'>Yellow</span> represents the Stanley Cup Champion, <span style='background-color: #00ffff'>Cyan</span> represents teams that qualified for the playoffs, <span style='background-color: #ff1694'>Pink</span> represents teams that did not qualify for the playoffs, and White represents teams that did not exist during the displayed year. </p>");
 
             // start attribute legend svg string
-            var svg = '<svg id="attribute-legend" width="175px" height="130px">';
+            var svg = '<svg id="attribute-legend" width="130px" height="85px">';
 
             // array of circle names to base loop on
-            //var circles = ["max", "mean", "min"];
             var circles = ["max", "highmid", "lowmid", "min"];
 
             // loop to add each circle and text to svg string
@@ -271,19 +253,19 @@ function createLegend(attribute){
 
               // assign the r and cy attributes
               var radius = calcPropRadius(dataStats[circles[i]]);
-              var cy = 75 - radius;
+              var cy = 85 - radius;
 
-              //circle string
+              // circle string
               svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="'
-              + cy + '" fill="#ff1694" fill-opacity="0.8" stroke="#000000" cx="30"/>';
+              + cy + '" fill="#ffffff" fill-opacity="0.8" stroke="#000000" cx="45"/>';
 
-              //evenly space out labels
-              var textY = i * 20 + 5;
+              // evenly space out labels
+              var textY = i * 20 + 15;
 
-              //text string
-              svg += '<text id="' + circles[i] + '-text" x="75" y="' + textY + '">' +
+              // text string
+              svg += '<text id="' + circles[i] + '-text" x="90" y="' + textY + '">' +
               Math.round(dataStats[circles[i]]*100)/100 + " wins" + '</text>';
-              };
+            };
 
             // close svg string
             svg += "</svg>";
@@ -300,9 +282,14 @@ function createLegend(attribute){
 
 };
 
+// update temporal legend container with current display year
 function updateTemporalLegend(attribute){
+
+    // update based on display year
     var legend = document.getElementById("year+-");
     var year = attribute.split("_")[1];
+
+    // change non-year text in container for the one temporal instance where a year did not have playoffs
     if (year == 2005){
       legend.innerHTML = "<b>" + year + " Lockout";
     }else {
@@ -310,6 +297,7 @@ function updateTemporalLegend(attribute){
   };
 }
 
+// create temporal legend as context for what place in sequential time is being displayed on the map
 function createTemporalLegend(attribute){
     var TemporalLegendControl = L.Control.extend({
         options: {
@@ -340,36 +328,59 @@ function updatePropSymbols(attribute){
 
         //access feature properties
         var props = layer.feature.properties;
-        console.log(props)
 
         //update each feature's radius based on new attribute values
         var radius = calcPropRadius(props[attribute]);
         layer.setRadius(radius);
-        console.log(layer)
+        console.log(props[attribute])
 
+        // access to pass in new colors for proportional symbols
         var options = {}
 
-        //add team to popup content string
+        // add team to popup content string
         var popupContent = "<p>Team:<b> " + props.Team + "</b></p>";
 
-        // derive popup content based on the number wins that playoff year,
+        // derive popup content and circle color based on the number wins that playoff year,
         // if the number is negative explain, the circumstances for the team not participiating in the playoffs
         var year = attribute.split("_")[1];
-        if (props["Wins_"+year] > -1){
+
+        // teams that made the playoffs, but did not win the championship
+        if (props["Wins_"+year] > -1 && props["Wins_"+year] < 16){
           var yearwins = props["Wins_"+year]
-          options.fillColor = "#ffff00";
+          options.fillColor = "#00ffff";
           popupContent += "<p>Playoff Wins in " + year + ":<b> " + yearwins + "</b></p>";
           popupContent += "<p>Playoff Wins Since 2006 " + ":<b> " + props[attribute] + "</b></p>";
-        } else if (props["Wins_"+year] == -1) {
+
+        // team that won the championship
+        } else if (props["Wins_"+year] == 16) {
+          options.fillColor = "#ffff00";
+          popupContent += "<p>Won the Stanley Cup in <b>" + year + "</b></p>";
+          popupContent += "<p>Playoff Wins Since 2006 " + ":<b> " + props[attribute] + "</b></p>";
+
+        // teams that did not qualify for the playoffs in the displayed year
+        }else if (props["Wins_"+year] == -1) {
+          options.fillColor = "#ff1694";
           popupContent += "<p>Missed the playoffs in <b>" + year + "</b></p>";
           popupContent += "<p>Playoff Wins Since 2006 " + ":<b> " + props[attribute] + "</b></p>";
+
+        // teams that did not play/exist during the displayed year
         } else if (props["Wins_"+year] == -999){
+          options.fillColor = "#ffffff";
           popupContent += "<p>Did not play in the <b>" + year + "</b> season</b></p>";
+
+        // only team to relocate (Atlanta > Winnipeg) in this time span
         } else if (props["Wins_"+year] == -998) {
+          options.fillColor = "#ffffff";
           popupContent += "<p>Moved to Winnipeg after <b>2011</b></p>";
           popupContent += "<p>Playoff Wins Since 2006 " + ":<b> " + props[attribute] + "</b></p>";
+
+        // popup text for explaining there was no playoffs due lockout
+        }else if (props["Wins_"+year] == -997) {
+          options.fillColor = "#ff1694";
+          popupContent += "<p>No playoffs in <b>2005</b> due to lockout</p>";
         }
 
+        // set new color options based on loop through current wins in display year
         layer.setStyle(options)
         //update popup content
         popup = layer.getPopup();
@@ -407,7 +418,7 @@ function processData(data){
     };
 
     //check result
-    console.log(attributes);
+    //console.log(attributes);
 
     return attributes;
 };
@@ -423,6 +434,7 @@ function getData(map){
             var attributes = processData(response);
 
             minValue = calcStats(response);
+
             //add symbols and UI elements
             createTitle();
             createPropSymbols(response, attributes);
