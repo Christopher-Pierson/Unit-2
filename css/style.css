@@ -1,30 +1,75 @@
 /* Stylesheet by Christopher Pierson, 2020 */
 
+
 #mapid {
     height: 800px;
     width: 100%;
     display: inline-block;
 }
 
-#panel {
-    width: 90%;
-    padding: 20px;
+/* #panel {
+    width: 50%;
+    padding: 30px;
     display: inline-block;
     vertical-align: top;
     text-align: center;
-    line-height: 42px;
+    line-height: 70px;
+} */
+
+.title-container {
+    width: auto;
+    height: auto;
+    background-color: rgba(255,255,255,255);
+    padding: 5px;
+    line-height: 1px;
+    text-align: center;
+    border: solid black 1.5px;
+}
+
+.sequence-control-container {
+    width: 300px;
+    height: 30px;
+    background-color: rgba(255,255,255,.5);
+    padding: 5px;
+    line-height: 45px;
+    text-align: center;
+    border: solid black 0.5px;
+}
+
+.legend-control-container {
+    width: auto;
+    height: auto;
+    background-color: rgba(255,255,255,0.5);
+    padding: 5px;
+    line-height: 45px;
+    text-align: center;
+    border: solid black 0.5px;
+}
+
+.temporal-legend-control-container {
+    width: auto;
+    height: 30px;
+    background-color: rgba(255,255,255,0.5);
+    padding: 5px;
+    line-height: 1px;
+    border: solid black 0.5px;
 }
 
 .range-slider {
-    width: 50%;
+    width: 200px;
 }
 
 .step {
-	width: 20%;
+	width: 30px;
+  height: 30px;
+  background-color: black;
+  border: 0pt;
 }
 
 .step img {
-	width: 100%;
+	width: 17px;
+  height: 30px;
+
 }
 
 
@@ -38,4 +83,9 @@
 
 .leaflet-popup-content p {
     margin: 0.2em 0;
+
+}
+
+.leaflet-popup-content-wrapper{
+  background-color: rgba(255,255,255,0.95);
 }

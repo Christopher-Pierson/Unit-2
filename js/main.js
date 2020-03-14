@@ -4,6 +4,15 @@
 //declare vars globally so all functions have access
 var mymap;
 var minValue;
+var attributes;
+var dataStats = {min: 1, max: 97, lowmid: 20, highmid: 50};
+//create marker options
+// var options = {
+//     color: "#000",
+//     weight: 1,
+//     opacity: 1,
+//     fillOpacity: 0.8
+// };
 
 
 //function to instantiate the Leaflet map
@@ -27,6 +36,27 @@ function createMap(){
     getData();
 };
 
+function createTitle(){
+    var Title = L.Control.extend({
+        options: {
+            position: 'topright'
+        },
+
+        onAdd: function () {
+            // create the control container with a particular class name
+            var container = L.DomUtil.create('div', 'title-container');
+
+            //add temporal legend div to container
+            $(container).append('<h1><b>NHL Playoff Wins During the Crosby & Ovechkin Era</h1>');
+
+
+            return container;
+        }
+    });
+
+    mymap.addControl(new Title());
+
+};
 
 //added at Example 2.3 line 20...function to attach popups to each mapped feature
 function onEachFeature(feature, layer) {
@@ -41,7 +71,7 @@ function onEachFeature(feature, layer) {
     };
 };
 
-function calcMinValue(data){
+function calcStats(data){
 
      //create empty array to store all data values
      var allValues = [];
@@ -49,7 +79,7 @@ function calcMinValue(data){
      //loop through each city
      for(var team of data.features){
           //loop through each year
-          for(var year = 2006; year <= 2019; year+=1){
+          for(var year = 2005; year <= 2019; year+=1){
                 //get population for current year
                var value = team.properties["Total_"+ String(year)];
                //add value to array
@@ -64,29 +94,34 @@ function calcMinValue(data){
            }
      }
 
-     //get minimum value of our array
-     var minValue = Math.min(...allValues)
+     //get min, max, mean stats for our array
+     var minValue = Math.min(...allValues);
+     dataStats.min = Math.min(...allValues);
+     dataStats.max = Math.max(...allValues);
 
-     console.log(minValue)
+     //calculate mean
+     var sum = allValues.reduce(function(a, b){return a+b;});
+     dataStats.mean = sum/ allValues.length;
+
+     //console.log(minValue)
      return minValue;
 }
 
 //calculate the radius of each proportional symbol
 function calcPropRadius(attValue) {
-
+  //alternate setting of radius for values of zero so point doens't appear too small on map
+  if (attValue === 0){
+    return 2
+  }
+  else{
      //constant factor adjusts symbol sizes evenly
      var minRadius = 3;
 
      //Flannery Appearance Compensation formula
      var radius = 1.0083 * Math.pow(attValue/minValue,0.5715) * minRadius
 
-    // console.log(0/1)
-    // console.log(radius + " radius")
-    // console.log(attValue + " attvalue")
-    // console.log(typeof attValue)
-    // console.log(minValue + " minvalue")
-    // console.log(minRadius + " minRadius")
     return radius;
+  }
 };
 
 //function to convert markers to circle markers
@@ -95,11 +130,11 @@ function pointToLayer(feature, latlng, attributes){
     var attribute = attributes[0];
 
     //check
-    console.log(attribute)
+    console.log(feature);
+    console.log(attribute);
 
     //create marker options
     var options = {
-        fillColor: "#ff1694",
         color: "#000",
         weight: 1,
         opacity: 1,
@@ -112,11 +147,14 @@ function pointToLayer(feature, latlng, attributes){
     //Give each feature's circle marker a radius based on its attribute value
     options.radius = calcPropRadius(attValue);
 
+    //
+    options.fillColor = "#ff1694";
+
     //create circle marker layer
     var layer = L.circleMarker(latlng, options);
 
     //build popup content string
-    var popupContent = "<p>Team: <b>" + feature.properties.Team + "</b></p><p>Playoff Wins: <b>" + feature.properties[attribute] + "</p>";
+    var popupContent = "<p>Team: <b>" + feature.properties.Team + "</b></p>";
 
     //bind the popup to the circle marker
     layer.bindPopup(popupContent);
@@ -126,22 +164,52 @@ function pointToLayer(feature, latlng, attributes){
 };
 
 //create new sequence controls
-function createSequenceControls(){
+function createSequenceControls(attributes){
+    var SequenceControl = L.Control.extend({
+          options: {
+              position: 'bottomleft'
+          },
+
+          onAdd: function () {
+              // create the control container div with a particular class name
+              var container = L.DomUtil.create('div', 'sequence-control-container');
+
+              // create range input element (slider)
+              $(container).append('<input class="range-slider" type="range">');
+
+              // add skip buttons
+              $(container).append('<button class="step" id="reverse" title="Reverse">Reverse</button>');
+              $(container).append('<button class="step" id="forward" title="Forward">Forward</button>');
+
+              //disable any mouse event listeners for the container
+              L.DomEvent.disableClickPropagation(container);
+
+              return container;
+          }
+      });
+
+      mymap.addControl(new SequenceControl());
+
     //create range input element (slider)
-    $('#panel').append('<input class="range-slider" type="range">');
+    //$('#panel').append('<input class="range-slider" type="range">');
+
 
     //set slider attributes
     $('.range-slider').attr({
-        max: 2019,
-        min: 2006,
+        max: 14,
+        min: 0,
         value: 0,
         step: 1
 
     });
 
     //add step buttons
-    $('#panel').append('<button class="step" id="reverse">Reverse</button>');
-    $('#panel').append('<button class="step" id="forward">Forward</button>');
+    //$('#panel').append('<button class="step" id="reverse">Reverse</button>');
+    //$('#panel').append('<button class="step" id="forward">Forward</button>');
+    //replace button content with images
+    $('#reverse').html('<img src="img/arrow_l.svg">');
+    $('#forward').html('<img src="img/arrow_r.svg">');
+
 
     //click listener for buttons
     $('.step').click(function(){
@@ -161,50 +229,155 @@ function createSequenceControls(){
 
       //update slider
       $('.range-slider').val(index);
+      updatePropSymbols(attributes[index]);
+      updateTemporalLegend(attributes[index]);
   });
 
     //input listener for slider
     $('.range-slider').on('input', function(){
         //get the new index value
         var index = $(this).val();
-        console.log(index);
+        updatePropSymbols(attributes[index]);
+        updateTemporalLegend(attributes[index]);
+        //console.log(index);
     });
 
 
 };
 
 
+function createLegend(attribute){
+    var LegendControl = L.Control.extend({
+        options: {
+            position: 'bottomright'
+        },
 
-// function createPropSymbols(data){
-//     //determine the attribute for scaling the proportional symbols
-//     var attribute = "Total_2019";
-//     //create marker options
-//     var geojsonMarkerOptions = {
-//         radius: 8,
-//         fillColor: "#ff1694",
-//         color: "#000",
-//         weight: 1,
-//         opacity: 1,
-//         fillOpacity: 0.8
-//     };
-//
-//     //create a Leaflet GeoJSON layer and add it to the map
-//     L.geoJson(data, {
-//         pointToLayer: function (feature, latlng) {
-//             //for each feature, determine its value for the selected attribute
-//             var attValue = Number(feature.properties[attribute]);
-//
-//             //give each feature's circle marker a radius based on its attribute value
-//             geojsonMarkerOptions.radius = calcPropRadius(attValue);
-//
-//             //examine the attribute value to check that it is correct
-//             //console.log(feature.properties, attValue);
-//
-//             //create circle markers
-//             return L.circleMarker(latlng, geojsonMarkerOptions);
-//         }
-//     }).addTo(mymap);
-// };
+        onAdd: function () {
+            // create the control container with a particular class name
+            var container = L.DomUtil.create('div', 'legend-control-container');
+
+            // var year = attribute.split("_")[1];
+            //$(container).append("<b> Size of circles correspond to that team's total playoff wins since 2005. </b>");
+
+            // start attribute legend svg string
+            var svg = '<svg id="attribute-legend" width="175px" height="130px">';
+
+            // array of circle names to base loop on
+            //var circles = ["max", "mean", "min"];
+            var circles = ["max", "highmid", "lowmid", "min"];
+
+            // loop to add each circle and text to svg string
+            for (var i=0; i<circles.length; i++){
+
+              // assign the r and cy attributes
+              var radius = calcPropRadius(dataStats[circles[i]]);
+              var cy = 75 - radius;
+
+              //circle string
+              svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="'
+              + cy + '" fill="#ff1694" fill-opacity="0.8" stroke="#000000" cx="30"/>';
+
+              //evenly space out labels
+              var textY = i * 20 + 5;
+
+              //text string
+              svg += '<text id="' + circles[i] + '-text" x="75" y="' + textY + '">' +
+              Math.round(dataStats[circles[i]]*100)/100 + " wins" + '</text>';
+              };
+
+            // close svg string
+            svg += "</svg>";
+
+            // add attribute legend svg to container
+            $(container).append(svg);
+
+            return container;
+        }
+    });
+
+    mymap.addControl(new LegendControl());
+
+
+};
+
+function updateTemporalLegend(attribute){
+    var legend = document.getElementById("year+-");
+    var year = attribute.split("_")[1];
+    if (year == 2005){
+      legend.innerHTML = "<b>" + year + " Lockout";
+    }else {
+    legend.innerHTML = "<b>" + year + " Playoffs";
+  };
+}
+
+function createTemporalLegend(attribute){
+    var TemporalLegendControl = L.Control.extend({
+        options: {
+            position: 'bottomleft'
+        },
+
+        onAdd: function () {
+            // create the control container with a particular class name
+            var container = L.DomUtil.create('div', 'temporal-legend-control-container');
+
+            //add temporal legend div to container
+            var year = attribute.split("_")[1];
+            $(container).append('<h1 id="year+-" ><b>NHL Lockout ' + year + '</h1>');
+
+
+            return container;
+        }
+    });
+
+    mymap.addControl(new TemporalLegendControl());
+
+};
+
+//resize proportional symbols according to new attribute values
+function updatePropSymbols(attribute){
+    mymap.eachLayer(function(layer){
+      if (layer.feature){
+
+        //access feature properties
+        var props = layer.feature.properties;
+        console.log(props)
+
+        //update each feature's radius based on new attribute values
+        var radius = calcPropRadius(props[attribute]);
+        layer.setRadius(radius);
+        console.log(layer)
+
+        var options = {}
+
+        //add team to popup content string
+        var popupContent = "<p>Team:<b> " + props.Team + "</b></p>";
+
+        // derive popup content based on the number wins that playoff year,
+        // if the number is negative explain, the circumstances for the team not participiating in the playoffs
+        var year = attribute.split("_")[1];
+        if (props["Wins_"+year] > -1){
+          var yearwins = props["Wins_"+year]
+          options.fillColor = "#ffff00";
+          popupContent += "<p>Playoff Wins in " + year + ":<b> " + yearwins + "</b></p>";
+          popupContent += "<p>Playoff Wins Since 2006 " + ":<b> " + props[attribute] + "</b></p>";
+        } else if (props["Wins_"+year] == -1) {
+          popupContent += "<p>Missed the playoffs in <b>" + year + "</b></p>";
+          popupContent += "<p>Playoff Wins Since 2006 " + ":<b> " + props[attribute] + "</b></p>";
+        } else if (props["Wins_"+year] == -999){
+          popupContent += "<p>Did not play in the <b>" + year + "</b> season</b></p>";
+        } else if (props["Wins_"+year] == -998) {
+          popupContent += "<p>Moved to Winnipeg after <b>2011</b></p>";
+          popupContent += "<p>Playoff Wins Since 2006 " + ":<b> " + props[attribute] + "</b></p>";
+        }
+
+        layer.setStyle(options)
+        //update popup content
+        popup = layer.getPopup();
+        popup.setContent(popupContent).update();
+     }
+
+    });
+};
 
 //Add circle markers for point features to the map
 function createPropSymbols(data, attributes){
@@ -215,6 +388,7 @@ function createPropSymbols(data, attributes){
         }
     }).addTo(mymap);
 };
+
 
 //build an attributes array from the data
 function processData(data){
@@ -238,20 +412,6 @@ function processData(data){
     return attributes;
 };
 
-// //function to retrieve the data and place it on the map
-// function getData(map){
-//     //load the data
-//     $.getJSON("data/NHL_PlayoffWins_06-19_alt.geojson", function(response){
-//
-//       //calculate minimum data value
-//       minValue = calcMinValue(response);
-//
-//       //call function to create proportional symbols
-//       createPropSymbols(response);
-//
-//     });
-// };
-
 //Import GeoJSON data
 function getData(map){
     //load the data
@@ -262,10 +422,13 @@ function getData(map){
             //create an attributes array
             var attributes = processData(response);
 
-            minValue = calcMinValue(response);
+            minValue = calcStats(response);
             //add symbols and UI elements
+            createTitle();
             createPropSymbols(response, attributes);
             createSequenceControls(attributes);
+            createLegend(attributes[0]);
+            createTemporalLegend(attributes[0]);
 
         }
     });
